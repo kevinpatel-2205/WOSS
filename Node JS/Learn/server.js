@@ -1,21 +1,19 @@
-const express = require("express");
+import dotenv from "dotenv";
+import express from "express";
+dotenv.config();
+import connectDB from "./src/config/db.config.js";
+import { apiLimiter } from "./src/middleware/rateLimit.middleware.js";
+import { authRoutes } from "./src/routes/auth.route.js";
 
-const PORT = 3000;
 const app = express();
-app.get(["/","/home","/kevin","/patel"], (req, res) => {
-  res.send(`Hello from ${req.path} endpoint.....`);
-});
+connectDB();
 
-app.get("/api", (req, res) => {
-  res.send(`Hello from ${req.path} endpoint`);
-});
+app.use(express.json());
 
-app.use((req, res) => {
-  res.send(`Hello from default ${req.path} endpoint`);
-});
+app.use(apiLimiter);
+app.use("/api/auth", authRoutes);
 
-
-
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
-  console.log(`server is listening on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
