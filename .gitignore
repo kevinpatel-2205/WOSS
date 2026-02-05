@@ -1,0 +1,79 @@
+# =========================
+# OS / Editor files
+# =========================
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.swn
+.idea/
+.vscode/
+*.code-workspace
+
+# =========================
+# Logs
+# =========================
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# =========================
+# Environment variables
+# =========================
+.env
+.env.*
+!.env.example
+
+# =========================
+# Dependencies
+# =========================
+node_modules/
+vendor/
+
+# =========================
+# Build / Output
+# =========================
+dist/
+build/
+out/
+coverage/
+
+# =========================
+# Cache
+# =========================
+.cache/
+.tmp/
+.temp/
+
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.venv/
+venv/
+
+# =========================
+# Java
+# =========================
+*.class
+*.jar
+*.war
+*.ear
+target/
+
+# =========================
+# macOS metadata
+# =========================
+.AppleDouble
+.LSOverride
+
+# =========================
+# Windows metadata
+# =========================
+ehthumbs.db
+Desktop.ini
