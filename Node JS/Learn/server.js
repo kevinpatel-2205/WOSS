@@ -11,6 +11,12 @@ connectDB();
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  }),
+);
 
 app.use(apiLimiter);
 app.use("/api/auth", authRoutes);
