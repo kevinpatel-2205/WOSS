@@ -19,6 +19,7 @@ const userSchema = new mongoose.Schema(
         /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
         "Please enter a valid email",
       ],
+      immutable: true,
     },
 
     password: {
@@ -26,12 +27,14 @@ const userSchema = new mongoose.Schema(
       required: true,
       minlength: [6, "Password must be at least 6 characters"],
       maxlength: [100, "Password is too long"],
+      select: false,
     },
 
     role: {
       type: String,
       enum: ["user", "admin"],
       default: "user",
+      transform: (v) => v.toUpperCase(),
     },
 
     age: {
@@ -45,4 +48,23 @@ const userSchema = new mongoose.Schema(
   },
 );
 
+userSchema.statics.findByRole = function (role) {
+  return this.find({ role: role });
+};
+
+userSchema.query.byRole = function (role) {
+  return this.where({ role: role });
+};
+
+userSchema.methods.getGreeting = function (name) {
+  return `Hello, my name is ${name || this.name} and I am a ${this.role}.`;
+};
+
+userSchema.virtual("fullNameAge").get(function (n) {
+  return `my name is ${this.name} and I am ${this.age} years old.`;
+});
+
+
+
 export default mongoose.model("User", userSchema);
+
