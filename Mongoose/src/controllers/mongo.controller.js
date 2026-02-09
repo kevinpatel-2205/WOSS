@@ -35,14 +35,16 @@ export const main = async (req, res) => {
     // console.log(results.fullNameAge);
     // console.log(results.getGreeting("Kevin"));
 
-    const result = await User.aggregate([
-      {
-        $group: {
-          _id: "$role",
-          count: { $sum: 1 },
-        },
-      },
-    ]);
+    // const result = await User.aggregate([
+    //   {
+    //     $group: {
+    //       _id: "$role",
+    //       count: { $sum: 1 },
+    //     },
+    //   },
+    // ]).explain();
+
+    
 
     res.json({
       resultlength: result.length,
