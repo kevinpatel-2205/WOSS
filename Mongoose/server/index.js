@@ -3,12 +3,16 @@ import express from "express";
 dotenv.config();
 import connectDB from "./src/config/db.config.js";
 import { mongoRoutes } from "./src/routes/mongo.route.js";
+import cors from "cors";
+import morgan from "morgan";
 
 const app = express();
 connectDB();
 
 app.use(express.json());
+app.use(cors());
 
+app.use(morgan(" method :method\n url :url\n status :status\n responseTime :response-time ms"));
 app.use("/api", mongoRoutes);
 
 app.use((err, req, res, next) => {
