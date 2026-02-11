@@ -2,8 +2,8 @@ import User from "../models/User.js";
 
 export const main = async (req, res) => {
   try {
-    const result = await User.findByRole("admin");
-    const results = await User.find().byRole("admin");
+    // const result = await User.findByRole("admin");
+    // const results = await User.find().byRole("admin");
 
     // const results = await User.findOne();
 
@@ -44,7 +44,7 @@ export const main = async (req, res) => {
     //   },
     // ]).explain();
 
-    
+    const result = await User.find();
 
     res.json({
       resultlength: result.length,

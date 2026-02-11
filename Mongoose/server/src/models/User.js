@@ -48,6 +48,9 @@ const userSchema = new mongoose.Schema(
   },
 );
 
+userSchema.index({ createdAt: -1 });
+
+
 userSchema.statics.findByRole = function (role) {
   return this.find({ role: role });
 };

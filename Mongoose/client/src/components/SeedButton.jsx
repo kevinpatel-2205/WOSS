@@ -3,9 +3,7 @@ import { seedUsers } from "../features/users/userSlice";
 
 const SeedButton = () => {
   const dispatch = useDispatch();
-  const { loading, message, error } = useSelector(
-    (state) => state.users
-  );
+  const { loading, message, error } = useSelector((state) => state.users);
 
   return (
     <div className="mb-6 text-center">
@@ -14,16 +12,12 @@ const SeedButton = () => {
         disabled={loading}
         className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold"
       >
-        {loading ? "Generating..." : "Generate 10,000 Users"}
+        {loading ? "Generating..." : "Generate 10,000,000 Users"}
       </button>
 
-      {message && (
-        <p className="text-green-600 mt-3 font-medium">{message}</p>
-      )}
+      {message && <p className="text-green-600 mt-3 font-medium">{message}</p>}
 
-      {error && (
-        <p className="text-red-600 mt-3 font-medium">{error}</p>
-      )}
+      {error && <p className="text-red-600 mt-3 font-medium">{error}</p>}
     </div>
   );
 };

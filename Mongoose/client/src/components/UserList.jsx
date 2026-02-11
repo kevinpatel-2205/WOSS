@@ -5,20 +5,15 @@ import { fetchUsers } from "../features/users/userSlice";
 const UserList = () => {
   const dispatch = useDispatch();
 
-  const {
-    users,
-    loading,
-    currentPage,
-    totalPages,
-    error,
-  } = useSelector((state) => state.users);
+  const { users, loading, currentPage, totalPages, error } = useSelector(
+    (state) => state.users,
+  );
 
   const limit = 10;
 
   useEffect(() => {
     dispatch(fetchUsers({ page: 1, limit }));
   }, [dispatch]);
-
 
   const handlePrev = () => {
     if (currentPage > 1) {
@@ -34,21 +29,13 @@ const UserList = () => {
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6 text-center">
-        Users List
-      </h1>
+      <h1 className="text-2xl font-bold mb-6 text-center">Users List</h1>
 
       {loading && (
-        <p className="text-center text-blue-600 font-medium">
-          Loading...
-        </p>
+        <p className="text-center text-blue-600 font-medium">Loading...</p>
       )}
 
-      {error && (
-        <p className="text-center text-red-600 font-medium">
-          {error}
-        </p>
-      )}
+      {error && <p className="text-center text-red-600 font-medium">{error}</p>}
 
       {!loading && users.length > 0 && (
         <>
@@ -66,25 +53,14 @@ const UserList = () => {
 
               <tbody>
                 {users.map((user, index) => (
-                  <tr
-                    key={user._id}
-                    className="border-b hover:bg-gray-50"
-                  >
+                  <tr key={user._id} className="border-b hover:bg-gray-50">
                     <td className="px-4 py-2">
                       {(currentPage - 1) * limit + index + 1}
                     </td>
-                    <td className="px-4 py-2 font-medium">
-                      {user.name}
-                    </td>
-                    <td className="px-4 py-2 text-gray-600">
-                      {user.email}
-                    </td>
-                    <td className="px-4 py-2">
-                      {user.role}
-                    </td>
-                    <td className="px-4 py-2">
-                      {user.age}
-                    </td>
+                    <td className="px-4 py-2 font-medium">{user.name}</td>
+                    <td className="px-4 py-2 text-gray-600">{user.email}</td>
+                    <td className="px-4 py-2">{user.role}</td>
+                    <td className="px-4 py-2">{user.age}</td>
                   </tr>
                 ))}
               </tbody>
