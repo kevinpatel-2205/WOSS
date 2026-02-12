@@ -91,8 +91,11 @@ export const getUsers = async (req, res) => {
 
 export const loadUsers = async (req, res) => {
   try {
-    const TOTAL = 10000000;
-    const BATCH_SIZE = 100000;
+    // const TOTAL = 10000000;
+    // const BATCH_SIZE = 100000;
+
+    const TOTAL = 100;
+    const BATCH_SIZE = 10;
 
     console.time("Insert Users");
 
