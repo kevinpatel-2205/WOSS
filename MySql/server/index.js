@@ -4,14 +4,17 @@ dotenv.config();
 import cors from "cors";
 import morgan from "morgan";
 import pool from "./config/db.config.js";
+import crudRoutes from "./routes/crud.routes.js";
 
 const app = express();
+let connection;
 try {
-const connection = await pool.getConnection();
-console.log("MySQL Connected...");
-connection.release();
+  connection = await pool.getConnection();
+  console.log("MySQL Connected...");
 } catch (err) {
   console.error("Error connecting to MySQL:", err);
+} finally {
+  if (connection) connection.release(); // Only release if connection exists
 }
 
 app.use(express.json());
@@ -22,6 +25,8 @@ app.use(
     " method :method\n url :url\n status :status\n responseTime :response-time ms",
   ),
 );
+
+app.use("/api", crudRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
