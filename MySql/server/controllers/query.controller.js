@@ -4,9 +4,9 @@ export const getAllUsers = async (req, res) => {
   const connection = await pool.getConnection();
   try {
     const [results] = await connection.query("SELECT * FROM user");
-    res.status(200).json(results);
+    res.status(200).json({ success: true, message: "Users retrieved successfully", data: results });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   } finally {
     connection.release();
   }
@@ -21,11 +21,11 @@ export const getUserByID = async (req, res) => {
       [userID]
     );
     if (results.length === 0) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ success: false, message: "User not found" });
     }
-    res.status(200).json(results[0]);
+    res.status(200).json({ success: true, message: "User retrieved successfully", data: results[0] });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   } finally {
     connection.release();
   }
@@ -39,7 +39,7 @@ export const createUser = async (req, res) => {
       "INSERT INTO user (userName, userEmail, userAge, userPassword) VALUES (?, ?, ?, ?)",
       [userName, userEmail, userAge, userPassword]
     );
-    res.status(201).json({ message: "User created", userID: result.insertId });
+    res.status(201).json({ success: true, message: "User created", userID: result.insertId });
   } catch (error) {
     res.status(500).json({ message: error.message });
   } finally {
@@ -57,11 +57,11 @@ export const updateUser = async (req, res) => {
       [userName, userEmail, userAge, userPassword, userID]
     );
     if (result.affectedRows === 0) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ success: false, message: "User not found" });
     }
-    res.status(200).json({ message: "User updated successfully" });
+    res.status(200).json({ success: true, message: "User updated successfully" });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   } finally {
     connection.release();
   }
