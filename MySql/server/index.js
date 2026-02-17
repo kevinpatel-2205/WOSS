@@ -3,20 +3,22 @@ import express from "express";
 dotenv.config();
 import cors from "cors";
 import morgan from "morgan";
-import pool from "./config/db.config.js";
-import crudRoutes from "./routes/crud.routes.js";
+import userRoutes from "./routes/user.routes.js";
+import sequelize, { connectDB } from "./config/db.config.js";
+
+// let connection;
+// try {
+//   connection = await pool.getConnection();
+//   console.log("MySQL Connected...");
+// } catch (err) {
+//   console.error("Error connecting to MySQL:", err);
+// } finally {
+//   if (connection) connection.release(); // Only release if connection exists
+// }
 
 const app = express();
-let connection;
-try {
-  connection = await pool.getConnection();
-  console.log("MySQL Connected...");
-} catch (err) {
-  console.error("Error connecting to MySQL:", err);
-} finally {
-  if (connection) connection.release(); // Only release if connection exists
-}
-
+await connectDB();
+await sequelize.sync();
 app.use(express.json());
 app.use(cors());
 
@@ -26,7 +28,7 @@ app.use(
   ),
 );
 
-app.use("/api", crudRoutes);
+app.use("/api/users", userRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
