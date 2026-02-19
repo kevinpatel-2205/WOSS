@@ -1,6 +1,10 @@
 import userService from "./user.service.js";
 
 class UserController {
+  constructor() {
+    this.get = this.get.bind(this);
+  }
+  
   async get(req, res) {
     const users = await userService.getAllUsers();
     res.json(users);
