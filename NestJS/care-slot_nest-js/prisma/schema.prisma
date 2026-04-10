@@ -1,0 +1,258 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  DOCTOR
+  PATIENT
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+}
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  CASH
+  RAZORPAY
+}
+
+enum MealTime {
+  BEFORE_MEAL
+  AFTER_MEAL
+}
+
+enum Timing {
+  MORNING
+  AFTERNOON
+  NIGHT
+}
+
+model User {
+  id        String  @id @default(uuid())
+  name      String
+  email     String  @unique
+  password  String
+  phone     String?
+  image     String  @default("https://res.cloudinary.com/dqkbv1knl/image/upload/v1771043942/upload_area_qnbfyw.png")
+  role      Role
+  isActive  Boolean @default(true)
+  isDeleted Boolean @default(false)
+
+  patient Patient?
+  doctor  Doctor?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Patient {
+  id     String @id @default(uuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  dateOfBirth DateTime?
+  gender      Gender?
+
+  latitude  Float?
+  longitude Float?
+  address   String?
+
+  medicalHistory String?
+  isDeleted      Boolean @default(false)
+
+  appointments  Appointment[]
+  reviews       Review[]
+  prescriptions Prescription[] @relation("PatientPrescriptions")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Doctor {
+  id     String @id @default(uuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  specialization  String
+  experience      Int     @default(0)
+  about           String?
+  consultationFee Float
+
+  isApproved Boolean @default(false)
+
+  latitude  Float?
+  longitude Float?
+  address   String?
+
+  averageRating Float @default(0)
+  totalReviews  Int   @default(0)
+
+  commission Float   @default(10)
+  isDeleted  Boolean @default(false)
+
+  appointments  Appointment[]
+  reviews       Review[]
+  prescriptions Prescription[] @relation("DoctorPrescriptions")
+
+  availableSlots    AvailableSlot[]
+  commissionHistory CommissionHistory[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AvailableSlot {
+  id       String @id @default(uuid())
+  doctorId String
+  doctor   Doctor @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+
+  date DateTime
+  time String // single slot (normalized)
+
+  createdAt DateTime @default(now())
+}
+
+model CommissionHistory {
+  id       String @id @default(uuid())
+  doctorId String
+  doctor   Doctor @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+
+  commission Float
+  changedAt  DateTime @default(now())
+}
+
+model Appointment {
+  id String @id @default(uuid())
+
+  doctorId String
+  doctor   Doctor @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+
+  patientId String
+  patient   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  appointmentDate DateTime
+  timeSlot        String
+
+  status AppointmentStatus @default(PENDING)
+
+  prescriptionAdded Boolean @default(false)
+
+  paymentStatus PaymentStatus  @default(PENDING)
+  paymentMethod PaymentMethod?
+
+  consultationFee Float
+  adminCommission Float @default(0)
+
+  notes     String?
+  isDeleted Boolean @default(false)
+
+  payment      Payment?
+  prescription Prescription?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Payment {
+  id            String      @id @default(uuid())
+  appointmentId String      @unique
+  appointment   Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+
+  doctorId  String
+  patientId String
+
+  amount Float
+
+  paymentMethod PaymentMethod
+
+  razorpayOrderId   String?
+  razorpayPaymentId String?
+
+  status PaymentStatus @default(PENDING)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Prescription {
+  id            String      @id @default(uuid())
+  appointmentId String      @unique
+  appointment   Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+
+  doctorId String
+  doctor   Doctor @relation("DoctorPrescriptions", fields: [doctorId], references: [id])
+
+  patientId String
+  patient   Patient @relation("PatientPrescriptions", fields: [patientId], references: [id])
+
+  notes     String?
+  isDeleted Boolean @default(false)
+
+  medicines Medicine[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Medicine {
+  id             String       @id @default(uuid())
+  prescriptionId String
+  prescription   Prescription @relation(fields: [prescriptionId], references: [id], onDelete: Cascade)
+
+  medicineName String
+  dosage       String
+  duration     String?
+
+  mealTime MealTime?
+
+  timings MedicineTiming[]
+}
+
+model MedicineTiming {
+  id         String   @id @default(uuid())
+  medicineId String
+  medicine   Medicine @relation(fields: [medicineId], references: [id], onDelete: Cascade)
+
+  timing Timing
+}
+
+model Review {
+  id String @id @default(uuid())
+
+  doctorId String
+  doctor   Doctor @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+
+  patientId String
+  patient   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  rating  Int
+  comment String?
+
+  isApprove Boolean @default(false)
+  aiReason  String  @default("")
+  isDeleted Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
